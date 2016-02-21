@@ -1,0 +1,7 @@
+application {
+    name = "Hospitalrun-frontend"
+    type = "node"
+    dependency {
+        source = "git@github.com:skaasten/otto-couchdb.git"
+    }
+}
