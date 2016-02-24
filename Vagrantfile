@@ -46,7 +46,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     # Customize the amount of memory on the VM:
-    vb.memory = "2024"
+    vb.memory = "2048"
   end
   #
   # View the documentation for the provider you are using for more
@@ -68,28 +68,31 @@ Vagrant.configure(2) do |config|
 #   end
     
   config.vm.provision "shell", inline: <<-SHELL
-   # install build-essential
-    apt-get update -qq
-    apt-get install -q -y build-essential git autoconf autoconf-archive gnu-standards help2man texinfo
-
-    # Install erlang
-    apt-get install -q -y erlang-base-hipe erlang-dev erlang-manpages erlang-eunit erlang-nox erlang-xmerl erlang-inets
-
-    # couchdb developper dependencies
-    apt-get install -q -y libmozjs185-dev libicu-dev curl libcurl4-gnutls-dev libtool
-
-    # doc dependencies
-    apt-get install -q -y help2man texinfo python-sphinx python-pip pip install -U pygments
+   sudo apt-get install git
+    
+   # Install couchdb
+   sudo apt-get install -y software-properties-common
+   sudo add-apt-repository -y ppa:couchdb/stable
+   sudo apt-get update -y
+   sudo apt-get remove couchdb couchdb-bin couchdb-common -yf
+   sudo apt-get install -y couchdb
+   sudo stop couchdb
+   sudo start couchdb
    
-    # Install ember
+    # # Install ember
+    sudo apt-get install -y curl
     curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
     sudo apt-get install -y nodejs
     sudo apt-get install -y npm
     sudo npm install -g ember-cli
     sudo npm install -g bower
-    sudo npm install  -g phantomjs-prebuilt
+    sudo npm install -g phantomjs-prebuilt
     cd /vagrant
-    ./script/initcouch.sh    
+    sed -i -e 's/\r$//' script/initcouch.sh
+    ./script/initcouch.sh
+    mkdir /tmp/node_modules
+    ln -s /tmp/node_modules .
+  
   SHELL
   
   config.vm.network "forwarded_port", guest: 4200, host: 4200
