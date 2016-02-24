@@ -37,14 +37,13 @@ Vagrant.configure(2) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
   config.vm.provider "virtualbox" do |vb|
-    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
     # Customize the amount of memory on the VM:
     vb.memory = "2048"
   end
@@ -87,13 +86,6 @@ Vagrant.configure(2) do |config|
     sudo npm install -g ember-cli
     sudo npm install -g bower
     sudo npm install -g phantomjs-prebuilt
-    cd /vagrant
-    sed -i -e 's/\r$//' script/initcouch.sh
-    ./script/initcouch.sh
-    mkdir /tmp/node_modules
-    chown vagrant:vagrant /tmp/node_modules
-    ln -s /tmp/node_modules .
-  
   SHELL
   
   config.vm.network "forwarded_port", guest: 4200, host: 4200
