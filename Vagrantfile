@@ -43,13 +43,11 @@ Vagrant.configure(2) do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
+    # Customize the amount of memory on the VM:
+    vb.memory = "2024"
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -64,12 +62,27 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "docker" do |d|
-    d.pull_images "klaemo/couchdb:latest"
-    d.run "-d -p 5984:5984 --name couchedb", image: "klaemo/couchdb"
-  end
+#   config.vm.provision "docker" do |d|
+#     d.pull_images "klaemo/couchdb:latest"
+#     d.run "-d -p 5984:5984 --name couchedb", image: "klaemo/couchdb"
+#   end
     
   config.vm.provision "shell", inline: <<-SHELL
+   # install build-essential
+    apt-get update -qq
+    apt-get install -q -y build-essential git autoconf autoconf-archive gnu-standards help2man texinfo
+
+    # Install erlang
+    apt-get install -q -y erlang-base-hipe erlang-dev erlang-manpages erlang-eunit erlang-nox erlang-xmerl erlang-inets
+
+    # couchdb developper dependencies
+    apt-get install -q -y libmozjs185-dev libicu-dev curl libcurl4-gnutls-dev libtool
+
+    # doc dependencies
+    apt-get install -q -y help2man texinfo python-sphinx python-pip pip install -U pygments
+   
+    # Install ember
+    curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
     sudo apt-get install -y nodejs
     sudo apt-get install -y npm
     sudo npm install -g ember-cli
