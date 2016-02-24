@@ -91,6 +91,7 @@ Vagrant.configure(2) do |config|
     sed -i -e 's/\r$//' script/initcouch.sh
     ./script/initcouch.sh
     mkdir /tmp/node_modules
+    chown vagrant:vagrant /tmp/node_modules
     ln -s /tmp/node_modules .
   
   SHELL
