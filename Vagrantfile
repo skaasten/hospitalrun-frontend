@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  config.vm.box = "hashicorp/precise64"
+  config.vm.box = "ubuntu/trusty64"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -61,23 +61,10 @@ Vagrant.configure(2) do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
-#   config.vm.provision "docker" do |d|
-#     d.pull_images "klaemo/couchdb:latest"
-#     d.run "-d -p 5984:5984 --name couchedb", image: "klaemo/couchdb"
-#   end
     
   config.vm.provision "shell", inline: <<-SHELL
    sudo apt-get install -y git
     
-   # Install couchdb
-   sudo apt-get install -y software-properties-common
-   sudo add-apt-repository -y ppa:couchdb/stable
-   sudo apt-get update -y
-   sudo apt-get remove couchdb couchdb-bin couchdb-common -yf
-   sudo apt-get install -y couchdb
-   sudo stop couchdb
-   sudo start couchdb
-   
     # # Install ember
     sudo apt-get install -y curl
     curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
@@ -85,9 +72,9 @@ Vagrant.configure(2) do |config|
     sudo apt-get install -y npm
     sudo npm install -g ember-cli
     sudo npm install -g bower
-    sudo npm install -g phantomjs-prebuilt
   SHELL
   
   config.vm.network "forwarded_port", guest: 4200, host: 4200
+  config.vm.network "forwarded_port", guest: 5984, host: 5984
 
 end
